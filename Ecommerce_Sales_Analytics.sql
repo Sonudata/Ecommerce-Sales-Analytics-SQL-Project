@@ -21,7 +21,7 @@ select*from customers;
 
 -- import table data 
 COPY customers(customer_id,name,email,phone,city,state,signup_date) 
-FROM 'D:\Course Updates\30 Day Series\SQL\CSV\Books.csv' 
+FROM 'D:\Course Updates\30 Day Series\SQL\CSV\customers.csv' 
 CSV HEADER;
 
 -- drop table 
@@ -125,9 +125,7 @@ COPY returns(return_id,order_id,return_date,reason)
 FROM 'D:\Course Updates\30 Day Series\SQL\CSV\returns.csv' 
 CSV HEADER;
 
--- 100 SQL Questions for Data Science (E-commerce Dataset)
-
--- 1️⃣ Basic Queries (15)
+-- Queries 
 
 -- List all customers.
 select*from customers;
@@ -197,184 +195,226 @@ from customers;
 select count(*)as total_order
 from orders;
 
--- 2️⃣ Joins & Relationships (15)
-
 -- Show customer names along with their order IDs.
+select c.name,o.order_id
+from customers c
+join orders o
+on c.customer_id =o.customer_id;
 
 -- Show orders along with the product details purchased.
+select o.order_id,p.product_name,od.price,od.quantity
+from orders o
+join orderdetails od on o.order_id=od.order_id
+join products p on p.product_id=od.product_id;
 
 -- Find the payment status of each order.
+select o.order_id, 
+case when p.payment_id is not null then 'Paid' 
+else 'Not Paid' end as payment_status
+from orders o
+left join payments p on o.order_id = p.order_id;
 
 -- Show customers and their total payments.
+select c.name, sum(p.amount) as total_payment
+from customers c
+join orders o on c.customer_id = o.customer_id
+join payments p on o.order_id = p.order_id
+group by c.name;
 
 -- Show customers who have returned an order.
+select distinct c.name
+from customers c
+join orders o on c.customer_id = o.customer_id
+join returns r on o.order_id = r.order_id;
 
 -- Find all orders with multiple products.
+select o.order_id
+from orderdetails od
+join orders o on o.order_id = od.order_id
+group by o.order_id
+having count(od.product_id) > 1;
 
 -- Find the city with the most orders.
-
--- Show the top 5 most sold products.
+select c.city, count(o.order_id) as total_orders
+from customers c
+join orders o on c.customer_id = o.customer_id
+group by c.city
+order by total_orders desc
+limit 1;
 
 -- Show customers with more than 3 orders.
+select c.name, count(o.order_id) as total_orders
+from customers c
+join orders o on c.customer_id = o.customer_id
+group by c.name
+having count(o.order_id) > 3;
 
 -- Find orders that have no payment yet.
-
--- List products that have never been ordered.
-
--- Show customer details for returned orders.
-
--- Find average payment per order.
-
--- Show product categories with total sales amount.
-
--- Find customers who bought products from more than 1 category.
-
--- 3️⃣ Aggregation & Group By (15)
+select o.order_id
+from orders o
+left join payments p on o.order_id = p.order_id
+where p.payment_id is null;
 
 -- Find total sales revenue.
-
--- Calculate monthly sales revenue.
+select sum(od.price * od.quantity) as total_sales_revenue
+from orderdetails od;
 
 -- Find average order value.
+select avg(total_amount) as avg_order_value
+from (
+    select o.order_id, sum(od.price * od.quantity) as total_amount
+    from orders o
+    join orderdetails od on o.order_id = od.order_id
+    group by o.order_id
+) sub;
 
 -- Show number of orders per customer.
-
--- Find top 3 customers by total spending.
+select c.name, count(o.order_id) as total_orders
+from customers c
+join orders o on c.customer_id = o.customer_id
+group by c.name;
 
 -- Show product-wise total sales.
-
--- Find category-wise average product price.
+select category, avg(price) as avg_price
+from products
+group by category;
 
 -- Count how many orders were returned.
-
--- Find % of returned orders vs total orders.
-
--- Find city-wise sales distribution.
-
--- Show top 3 categories by sales amount.
+select count(distinct r.order_id) as total_returns
+from returns r;
 
 -- Find minimum, maximum, average payment amounts.
+select min(amount) as min_payment,
+       max(amount) as max_payment,
+       avg(amount) as avg_payment
+from payments;
 
 -- Show daily sales trend in the last 7 days.
-
--- Calculate revenue contribution of each category.
+select o.order_date, sum(od.price * od.quantity) as daily_sales
+from orders o
+join orderdetails od on o.order_id = od.order_id
+where o.order_date >= current_date - interval '7 days'
+group by o.order_date
+order by o.order_date;
 
 -- Find the month with highest revenue.
-
--- 4️⃣ Subqueries & CTE (15)
-
--- Find customers who spent more than the average spending.
+select date_trunc('month', o.order_date) as month, sum(od.price * od.quantity) as monthly_revenue
+from orders o
+join orderdetails od on o.order_id = od.order_id
+group by month
+order by monthly_revenue desc
+limit 1;
 
 -- Find products priced higher than the average product price.
-
--- Show orders above the overall average order value.
-
--- Find customers who ordered the most expensive product.
+select *
+from products
+where price > (select avg(price) from products);
 
 -- Find top 5 products by revenue using a subquery.
-
--- Find the 2nd highest spending customer.
-
--- Show products that were never returned.
-
--- Find customers who placed orders in every month of 2024.
-
--- Show repeat customers (more than 1 order).
+select p.product_name, sum(od.price * od.quantity) as revenue
+from products p
+join orderdetails od on p.product_id = od.product_id
+group by p.product_name
+order by revenue desc
+limit 5;
 
 -- Find customers who placed exactly 1 order.
-
--- Find orders where payment > 2 times the average payment.
-
--- Show the most returned product using CTE.
-
--- Find monthly revenue growth using CTE.
-
--- Show customer with highest lifetime value using subquery.
-
--- Show category-wise rank of products by sales using CTE.
-
--- 5️⃣ Window Functions (15)
+select c.name
+from customers c
+join orders o on c.customer_id = o.customer_id
+group by c.name
+having count(o.order_id) = 1;
 
 -- Rank customers by spending.
-
--- Rank products by sales within each category.
-
--- Show the top order of each customer.
-
--- Calculate running total of sales by month.
-
--- Calculate moving average of sales (last 3 months).
-
--- Show difference in spending between current and previous order (per customer).
-
--- Find customers who improved their spending month over month.
-
--- Show best-selling product in each month.
-
--- Rank customers by number of returns.
-
--- Find top 2 products in each category.
-
--- Show rank of cities by sales.
-
--- Calculate cumulative revenue till date.
-
--- Compare this month vs last month revenue per customer.
+select c.name, sum(od.price * od.quantity) as total_spent,
+       rank() over(order by sum(od.price * od.quantity) desc) as spending_rank
+from customers c
+join orders o on c.customer_id = o.customer_id
+join orderdetails od on o.order_id = od.order_id
+group by c.name;
 
 -- Show lag in payment dates for each order.
+select order_id, payment_date,
+       payment_date - lag(payment_date) over(partition by order_id order by payment_date) as days_since_last_payment
+from payments;
 
 -- Find first and last order date per customer.
-
--- 6️⃣ Date & Time Analysis (10)
+select customer_id,
+       min(order_date) over(partition by customer_id) as first_order,
+       max(order_date) over(partition by customer_id) as last_order
+from orders;
 
 -- Find orders placed on weekends.
+select *
+from orders
+where extract(dow from order_date) in (0,6);  -- 0 = Sunday, 6 = Saturday
 
 -- Show sales by day of week.
+select extract(dow from o.order_date) as day_of_week, sum(od.price * od.quantity) as total_sales
+from orders o
+join orderdetails od on o.order_id = od.order_id
+group by day_of_week
+order by day_of_week;
 
 -- Find average order value per month.
-
--- Find revenue for the last 3 months.
+select date_trunc('month', o.order_date) as month,
+       avg(od.price * od.quantity) as avg_order_value
+from orders o
+join orderdetails od on o.order_id = od.order_id
+group by month
+order by month;
 
 -- Show customers who signed up in 2024.
+select *
+from customers
+where extract(year from signup_date) = 2024;
 
 -- Show orders placed in Q1 (Jan–Mar).
-
--- Find peak order hour of the day.
+select *
+from orders
+where extract(month from order_date) between 1 and 3;
 
 -- Calculate average delivery time (order vs return date difference).
-
--- Find customers who haven’t ordered in last 90 days.
-
--- Show year-over-year revenue growth.
-
--- 7️⃣ Advanced Business Metrics (15)
+select avg(r.return_date - o.order_date) as avg_delivery_days
+from orders o
+join returns r on o.order_id = r.order_id;
 
 -- Calculate Customer Lifetime Value (CLV).
+select c.customer_id, c.name,
+     sum(od.price * od.quantity) as lifetime_value
+from customers c
+join orders o on c.customer_id = o.customer_id
+join orderdetails od on o.order_id = od.order_id
+group by c.customer_id, c.name;
 
 -- Find Customer Retention Rate.
 
 -- Find Repeat Purchase Rate (RPR).
+select (count(distinct customer_id)::decimal / (select count(*) from customers)) * 100 as repeat_purchase_rate
+from orders
+group by customer_id
+having count(order_id) > 1;
 
 -- Find Average Revenue Per User (ARPU).
+select sum(od.price * od.quantity)/count(distinct o.customer_id) as arpu
+from orders o
+join orderdetails od on o.order_id = od.order_id;
 
 -- Find Customer Acquisition per month.
-
--- Find Churned Customers (no order in last 6 months).
-
--- Calculate Return Rate % per category.
-
--- Find contribution of top 20% customers (Pareto principle).
-
--- Find product cross-selling opportunities (customers who buy X also buy Y).
-
--- Find average basket size (products per order).
-
--- Calculate Gross Merchandise Value (GMV).
+select date_trunc('month', signup_date) as month, count(*) as new_customers
+from customers
+group by month
+order by month;
 
 -- Find revenue lost due to returns.
-
--- Find city with highest average revenue per customer.
+select sum(od.price * od.quantity) as revenue_lost
+from returns r
+join orderdetails od on r.order_id = od.order_id;
 
 -- Compare Electronics vs Clothing revenue growth.
+select category, sum(od.price * od.quantity) as total_revenue
+from products p
+join orderdetails od on p.product_id = od.product_id
+where category in ('Electronics','Clothing')
+group by category;
 
--- Create customer segmentation: High, Medium, Low spenders.
