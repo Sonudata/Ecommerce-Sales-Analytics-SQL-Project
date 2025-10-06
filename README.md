@@ -27,7 +27,9 @@ CSV files for each table are included. Data is imported using the COPY command i
 Example:
 
 COPY customers(customer_id,name,email,phone,city,state,signup_date)
+
 FROM 'path_to_csv/customers.csv'
+
 CSV HEADER;
 
 Make sure CSV paths are correct before importing.
@@ -65,4 +67,5 @@ These queries help simulate real-world business analytics for an ecommerce platf
 
 ## 🔗 GitHub
 
-Project is hosted here: 
+Project is hosted here: https://github.com/Sonudata/Ecommerce-Sales-Analytics-SQL-Project
+
