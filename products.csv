@@ -1,0 +1,26 @@
+"product_id","product_name","category","price","stock_quantity"
+1,"Smartphone Samsung Galaxy S21","Electronics","54999.00",120
+2,"Laptop Dell Inspiron 15","Electronics","62999.00",80
+3,"Wireless Earbuds Boat Airdopes","Electronics","1999.00",300
+4,"Smartwatch Apple Watch SE","Electronics","28999.00",50
+5,"LED TV Sony Bravia 43""","Electronics","37999.00",40
+6,"Men T-Shirt Polo","Clothing","999.00",200
+7,"Women Kurti FabIndia","Clothing","1499.00",150
+8,"Men Jeans Levis","Clothing","2499.00",180
+9,"Women Saree Silk","Clothing","4999.00",75
+10,"Sports Shoes Nike","Clothing","3499.00",120
+11,"Cooking Pan Prestige","Home & Kitchen","1299.00",90
+12,"Mixer Grinder Philips","Home & Kitchen","3999.00",60
+13,"Refrigerator LG 260L","Home & Kitchen","22999.00",30
+14,"Microwave Oven IFB 20L","Home & Kitchen","9999.00",40
+15,"Water Purifier Kent RO","Home & Kitchen","15999.00",25
+16,"Harry Potter Box Set","Books","2999.00",100
+17,"Rich Dad Poor Dad","Books","499.00",200
+18,"Data Science from Scratch","Books","1499.00",50
+19,"Atomic Habits","Books","799.00",120
+20,"Think and Grow Rich","Books","599.00",150
+21,"Football Adidas","Sports","1599.00",100
+22,"Cricket Bat SS","Sports","2999.00",60
+23,"Yoga Mat Reebok","Sports","999.00",120
+24,"Badminton Racket Yonex","Sports","1899.00",80
+25,"Dumbbell Set 10Kg","Sports","2499.00",70
